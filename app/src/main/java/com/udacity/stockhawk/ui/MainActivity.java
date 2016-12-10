@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onClick(String symbol) {
         Intent intent = new Intent(this, ChartActivity.class);
+        intent.setData(Contract.Quote.makeUriForStock(symbol));
         startActivity(intent);
     }
 
