@@ -9,6 +9,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -80,14 +81,26 @@ public class ChartActivity extends AppCompatActivity
     }
 
     private void setupChart() {
-        YAxis axisLeft = chart.getAxisLeft();
-        int textColor = getResources().getColor(android.R.color.white);
-        axisLeft.setTextColor(textColor);
-        axisLeft.setValueFormatter(priceAxisFormatter);
 
-        // TODO check RTL
-        chart.getAxisRight().setDrawLabels(false);
+        YAxis axisLeft = chart.getAxisLeft();
+        YAxis axisRight = chart.getAxisLeft();
+
+
+        YAxis invisibleYAxis = isLayoutDirectionRtl() ? axisRight : axisLeft;
+        invisibleYAxis.setDrawLabels(false);
+
+        YAxis visibleYAxis = isLayoutDirectionRtl() ? axisLeft : axisRight;
+        int textColor = getResources().getColor(android.R.color.white);
+        visibleYAxis.setTextColor(textColor);
+        visibleYAxis.setValueFormatter(priceAxisFormatter);
+
         chart.getLegend().setTextColor(textColor);
+    }
+
+    private boolean isLayoutDirectionRtl() {
+        int layoutDirection = TextUtils.getLayoutDirectionFromLocale(
+                getResources().getConfiguration().locale);
+        return layoutDirection == View.LAYOUT_DIRECTION_LTR;
     }
 
     @Override
@@ -157,8 +170,12 @@ public class ChartActivity extends AppCompatActivity
         for (String historyValue : history.split("\n")) {
             String[] historyParts = historyValue.split(", ");
 
-            // TODO do not reverse the list if RTL
-            quotes.add(0, new Quote(Long.valueOf(historyParts[0]), new BigDecimal(historyParts[1])));
+            Quote quote = new Quote(Long.valueOf(historyParts[0]), new BigDecimal(historyParts[1]));
+            if (isLayoutDirectionRtl()) {
+                quotes.add(0, quote);
+            } else {
+                quotes.add(quote);
+            }
         }
 
         return quotes;
