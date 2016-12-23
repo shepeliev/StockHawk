@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -25,9 +26,15 @@ import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
 
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+
+import static com.udacity.stockhawk.R.id.symbol;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener,
@@ -120,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     void addStock(String symbol) {
         if (symbol != null && !symbol.isEmpty()) {
 
+            new CheckSymbolTask().execute(symbol);
+
             if (networkUp()) {
                 swipeRefreshLayout.setRefreshing(true);
             } else {
@@ -186,5 +195,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class CheckSymbolTask extends AsyncTask<String, Void, Stock> {
+
+        @Override
+        protected Stock doInBackground(String... args) {
+            try {
+                return YahooFinance.get(args[0]);
+            } catch (IOException e) {
+                Timber.e(e);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Stock stock) {
+            if (stock != null && stock.getName() == null) {
+                String message = getString(R.string.toast_no_stock, stock.getSymbol());
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

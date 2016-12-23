@@ -31,6 +31,7 @@
 
     <string name="toast_stock_added_no_connectivity">Symbol <xliff:g id="symbol" example="GOOG">%1$s</xliff:g> added. Will refresh when network available.</string>
     <string name="toast_no_connectivity">Will refresh when network available.</string>
+    <string name="toast_no_stock">Symbol <xliff:g id="symbol" example="GOOG">%1$s</xliff:g> does not exist.</string>
 
     <string name="chart_description"><xliff:g id="symbol" example="GOOG">%1$s</xliff:g> rates</string>
 
