@@ -35,4 +35,8 @@
 
     <string name="chart_description"><xliff:g id="symbol" example="GOOG">%1$s</xliff:g> rates</string>
 
+    <string name="description_add_symbol">Add new symbol</string>
+    <string name="description_display_mode_absolute">Switch display mode to relative</string>
+    <string name="description_display_mode_relative">Switch display mode to absolute</string>
+
 </resources>
