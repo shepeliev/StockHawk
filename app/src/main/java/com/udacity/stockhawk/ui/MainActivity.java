@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String symbol = adapter.getSymbolAtPosition(viewHolder.getAdapterPosition());
                 PrefUtils.removeStock(MainActivity.this, symbol);
                 getContentResolver().delete(Contract.Quote.makeUriForStock(symbol), null, null);
+                sendBroadcast(new Intent(QuoteSyncJob.ACTION_DATA_UPDATED));
             }
         }).attachToRecyclerView(stockRecyclerView);
 
@@ -191,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             PrefUtils.toggleDisplayMode(this);
             setDisplayModeMenuItemIcon(item);
             adapter.notifyDataSetChanged();
+            sendBroadcast(new Intent(QuoteSyncJob.ACTION_DATA_UPDATED));
             return true;
         }
         return super.onOptionsItemSelected(item);
