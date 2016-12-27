@@ -127,10 +127,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     void addStock(String symbol) {
         if (!TextUtils.isEmpty(symbol) && symbol.matches("\\w+")) {
 
-            new CheckSymbolTask().execute(symbol);
+            if (PrefUtils.getStocks(this).contains(symbol)) {
+                return;
+            }
 
             if (networkUp()) {
                 swipeRefreshLayout.setRefreshing(true);
+                new CheckSymbolTask().execute(symbol);
             } else {
                 String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
